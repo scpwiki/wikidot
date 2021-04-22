@@ -1,0 +1,41 @@
+{
+  "name": "laravel-vite",
+  "license": "agpl-3.0-or-later",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev:cmd": "vite && php artisan serve",
+    "dev": "ultra dev:cmd",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "ultra": {
+    "concurrent": [
+      "dev:cmd"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scpwiki/wikijump.git"
+  },
+  "bugs": {
+    "url": "https://scuttle.atlassian.net/servicedesk/customer/portal/2"
+  },
+  "homepage": "https://github.com/scpwiki/wikijump#readme",
+  "eslintConfig": {
+    "extends": "../../.eslintrc.js"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.2.5",
+    "cm-lang-ftml": "^0.0.0",
+    "ftml-wasm": "^0.0.0",
+    "ftml-wasm-worker": "^0.0.0",
+    "laravel-vite": "^0.0.8",
+    "normalize.css": "^8.0.1",
+    "postcss": "^8.2.10",
+    "sheaf-core": "^0.0.0",
+    "tailwind": "^4.0.0",
+    "tailwindcss": "^2.1.1",
+    "wj-util": "^1.0.0"
+  }
+}

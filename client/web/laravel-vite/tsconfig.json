@@ -1,0 +1,27 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "rootDir": "./resources",
+        "outDir": "./public/build",
+        "tsBuildInfoFile": "./public/build/.tsbuildinfo",
+        "emitDeclarationOnly": false,
+        "noEmit": true,
+        "types": [
+            "vite/client"
+        ],
+        "paths": {
+            "@/*": [
+                "resources/*"
+            ]
+        }
+    },
+    "include": [
+        "./vite.config.ts",
+        "../../misc/types",
+        "./resources/**/*"
+    ],
+    "exclude": [
+        "./node_modules"
+    ]
+}
