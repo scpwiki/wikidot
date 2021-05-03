@@ -1,50 +1,65 @@
 <script lang="ts">
-  import { onMount } from "svelte"
+  import { contain } from "./lib/actions"
+  import Clickable from "./Clickable.svelte"
+
+  const DEFAULT_TAB_TITLE = "Unnamed tab"
+  const SELECTED_TAB_HOVER_TEXT = "active"
 
   let thisElement: HTMLElement
-  let tabs: string[] = []
-  let tabContents: string[] = []
+  let tabTitles: string[] = []
+  let tabContents: HTMLElement[] = []
   let selectedTabNumber = 0
 
-  onMount(() => {
-    // Find all the tab stubs
-    const contents = thisElement.parentElement?.querySelectorAll<HTMLElement>(
-      ".wj-tabview-content"
-    )
+  /**
+   * Sets the current tab selection.
+   *
+   * @param tabNumber - The tab index to select.
+   */
+  function selectTab(tabNumber: number) {
+    selectedTabNumber = tabNumber
+  }
+
+  /**
+   * Action that extracts the tab names and contents from the stub component.
+   *
+   * @param stub - The root element of the stubbed tabview.
+   */
+  const extractFromStub: SvelteAction = stub => {
+    const contents = stub.parentElement?.querySelectorAll<HTMLElement>(".tabview-content")
     if (!contents) return
     contents.forEach(contentElement => {
       // Move them from the DOM into an array
       contentElement.remove()
-      tabs = [...tabs, contentElement.dataset.title ?? ""]
-      tabContents = [...tabContents, contentElement.innerHTML]
-      // The contents of the tab is stored as innerHTML as a string, which is
-      // not super-performant. Ideally, the elements would be stored as
-      // DOMElement objects and then bound to the tab content elements in
-      // their 'this' property. However, in Svelte, bind:this is one-way,
-      // used only to get a reference to a given element, not to set that
-      // reference.
+      tabTitles = [...tabTitles, contentElement.dataset.title ?? DEFAULT_TAB_TITLE]
+      tabContents = [...tabContents, contentElement]
     })
-  })
-
-  function selectTab(tabIndex: number) {
-    console.log("Switching to tab", tabIndex)
-    selectedTabNumber = tabIndex
   }
 </script>
 
-<div class="tabview" bind:this={thisElement}>
-  <div class="tabs">
-    {#each tabs as tab, tabIndex}
-      <div class="tab-selector" on:click={() => selectTab(tabIndex)}>
-        {tab}
-      </div>
+<!-- was #wiki-tabview-[hash].yui-navset.yui-navset-top -->
+<div class="tabview" use:extractFromStub>
+  <!-- was .yui-nav -->
+  <ul class="tabview-selectors">
+    {#each tabTitles as tabTitle, tabNumber}
+      <li
+        class="tabview-selector {tabNumber === selectedTabNumber ? 'selected' : ''}"
+        title={tabNumber === selectedTabNumber ? SELECTED_TAB_HOVER_TEXT : undefined}
+      >
+        <Clickable on:click={() => selectTab(tabNumber)}>
+          <!-- was em -->
+          {tabTitle}
+        </Clickable>
+      </li>
     {/each}
-  </div>
-  <div class="tab-contents">
+  </ul>
+  <!-- was .yui-content -->
+  <div class="tabview-contents">
     {#each tabContents as tabContent, tabNumber}
-      <div class="tab-content {tabNumber === selectedTabNumber ? 'selected' : ''}">
-        {@html tabContent}
-      </div>
+      <!-- was #wiki-tab-[id]-[id] -->
+      <div
+        use:contain={tabContent}
+        class="tabview-content {tabNumber === selectedTabNumber ? 'selected' : ''}"
+      />
     {/each}
   </div>
 </div>
@@ -54,13 +69,13 @@
     color: green;
   }
 
-  .tab-selector {
+  .tabview-selector {
     padding: 5px;
     border: 1px solid black;
     display: inline-block;
   }
 
-  .tab-content:not(.selected) {
+  .tabview-content:not(.selected) {
     display: none;
   }
 </style>
