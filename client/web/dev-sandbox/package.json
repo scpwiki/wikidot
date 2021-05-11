@@ -19,5 +19,8 @@
     "sheaf-core": "workspace:*",
     "wj-css": "workspace:*",
     "wj-util": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "2.2.4"
   }
 }
