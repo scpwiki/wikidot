@@ -31,7 +31,8 @@
       "fast-safe-stringify",
       "tsconfig-paths",
       "mdast-util-from-markdown",
-      "mdast-util-to-markdown"
+      "mdast-util-to-markdown",
+      "ts-interface-checker"
     ]
   },
   "exclude": ["node_modules", "misc/templates", "dist", "tests-dist"]

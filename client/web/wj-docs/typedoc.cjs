@@ -5,11 +5,11 @@ const TypeDoc = require("typedoc")
 // change working directory to repo root if it isn't already
 process.chdir(path.resolve(__dirname, "../../"))
 
-const OUTPUT_DIR = "web/wj-docs/dist"
+const OUTPUT_DIR = "web/wj-docs/dist/typedoc"
 const TS_CONFIG = "tsconfig.typedoc.json"
 
 async function main() {
-  const entryPoints = [...(await globby("modules/*", { onlyDirectories: true }))]
+  const entryPoints = await globby("modules/*", { onlyDirectories: true })
 
   const app = new TypeDoc.Application()
 

@@ -4,7 +4,8 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "build": "node typedoc.cjs"
+    "build:cmd": "node svelte-doc-gen.cjs && node typedoc.cjs",
+    "build": "trash dist && ultra --build build:cmd"
   },
   "type": "module",
   "eslintConfig": {
@@ -12,5 +13,12 @@
   },
   "dependencies": {
     "components": "workspace:*"
+  },
+  "devDependencies": {
+    "@strictsoftware/typedoc-plugin-monorepo": "^0.4.2",
+    "sucrase": "^3.18.1",
+    "svelte-docster": "^1.2.1",
+    "svelte2tsx": "^0.1.189",
+    "typedoc": "^0.20.36"
   }
 }
