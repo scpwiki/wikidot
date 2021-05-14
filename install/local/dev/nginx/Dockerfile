@@ -15,10 +15,17 @@ RUN git clone \
             --branch "${WIKIJUMP_REPO_BRANCH}" \
             "${WIKIJUMP_REPO}"
 
-WORKDIR /src/${WIKIJUMP_REPO_DIR}/web
+RUN npm install pnpm --global
 
-RUN npm install
-RUN npm run build
+# Install client monorepo dependencies, and build modules
+WORKDIR /src/${WIKIJUMP_REPO_DIR}/client
+RUN pnpm install
+RUN pnpm build:remote
+
+# Install frontend dependencies, and build
+WORKDIR /src/${WIKIJUMP_REPO_DIR}/web
+RUN pnpm install
+RUN pnpm build:remote
 
 FROM nginx:alpine
 ARG WIKIJUMP_REPO_DIR="wikijump"

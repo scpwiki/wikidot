@@ -1,0 +1,59 @@
+# -- UTILITY
+
+# Use this like:
+# $ pnpm compose up
+# $ pnpm compose build
+compose:
+  - cd ../install/local/dev
+  - docker-compose -p wikijump -f docker-compose.yaml -f docker-compose.dev.yaml
+
+# Completely rebuilds by passing `--no-cache`.
+compose:rebuild:
+  $depend: []
+  $action: ultra --raw compose:rebuild:cmd
+
+  cmd:
+    - pnpm compose down
+    - ultra compose:rebuild:build
+
+  build: >
+    cd ../install/local/dev &&
+    docker-compose -p wikijump
+    -f docker-compose.yaml -f docker-compose.dev.yaml
+    build --no-cache
+
+# -- BUILD
+
+build:
+  $depend: []
+  $action: ultra --build build:cmd
+
+  cmd:
+    - pnpm build:legacy
+    - pnpm build:frontend
+    - pnpm build:local
+
+  legacy: node scripts/build-legacy.js build
+  frontend: vite build
+  local: pnpm compose build
+
+build:remote:
+  - pnpm build:legacy
+  - pnpm build:frontend
+
+# -- DEV
+
+dev:
+  $depend: []
+  $action:
+    - pnpm build:local
+    - ultra dev:cmd
+
+  cmd:
+    - pnpm dev:legacy
+    - pnpm dev:frontend
+    - pnpm dev:local
+
+  legacy: node scripts/build-legacy.js dev
+  frontend: vite dev
+  local: pnpm compose up

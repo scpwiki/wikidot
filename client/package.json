@@ -5,28 +5,28 @@
   "private": true,
   "scripts": {
     "build": "ultra -r build",
+    "build:force": "ultra --rebuild -r build",
+    "build:remote": "ultra -r --filter \"modules/*\" build",
     "dev:dev-sandbox": "ultra --raw -r --filter \"web/dev-sandbox\" dev",
-    "force-build": "ultra --rebuild -r build",
-    "lint": "pnpm lint:eslint && pnpm lint:prettier && pnpm lint:stylelint",
+    "lint": "pnpm lint:eslint && pnpm lint:stylelint && pnpm lint:prettier",
     "lint:eslint": "eslint \"./**/*.js\" \"./**/*.ts\"",
-    "lint:fix": "pnpm lint:fix:eslint && pnpm lint:fix:prettier && pnpm lint:fix:stylelint",
+    "lint:fix": "pnpm lint:fix:eslint && pnpm lint:fix:stylelint && pnpm lint:fix:prettier",
     "lint:fix:eslint": "eslint \"./**/*.js\" \"./**/*.ts\" --fix",
     "lint:fix:prettier": "prettier --write --ignore-unknown \"modules/**\" \"web/**\"",
     "lint:fix:stylelint": "stylelint \"modules/**/*.scss\" \"web/**/*.scss\" --fix",
     "lint:prettier": "prettier --ignore-unknown --check \"modules/**\" \"web/**\"",
     "lint:stylelint": "stylelint \"modules/**/*.scss\" \"web/**/*.scss\"",
-    "test": "pnpm test:compile && nyc --use-spawn-wrap npm run test:run",
+    "test": "ultra test:cmd",
+    "test:cmd": "pnpm test:compile && nyc --use-spawn-wrap npm run test:run",
     "test:compile": "trash tests-dist && node scripts/build-tests.js",
     "test:run": "uvu ./tests-dist/dist test-megabundle.+js$",
     "typecheck": "tsc",
-    "update": "pnpm i && pnpm -r build",
     "validate": "ultra --concurrency 10 validate:cmd",
-    "validate:cmd": "pnpm lint && pnpm typecheck",
+    "validate:cmd": "pnpm lint:eslint && pnpm lint:stylelint && pnpm lint:prettier && pnpm typecheck",
     "nabs": "nabs"
   },
   "ultra": {
     "concurrent": [
-      "lint",
       "validate:cmd"
     ]
   },
@@ -71,7 +71,7 @@
     "prettier": "^2.3.0",
     "prettier-plugin-svelte": "2.3.0",
     "rollup": "^2.47.0",
-    "sass": "^1.32.12",
+    "sass": "^1.32.13",
     "stylelint": "^13.13.1",
     "stylelint-config-recess-order": "^2.4.0",
     "stylelint-order": "^4.1.0",
@@ -83,6 +83,6 @@
     "typescript": "4.3.0-beta",
     "ultra-runner": "^3.10.5",
     "uvu": "^0.5.1",
-    "vite": "^2.3.0"
+    "vite": "^2.3.2"
   }
 }
