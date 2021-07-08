@@ -23,7 +23,9 @@ use super::escape::escape;
 use super::meta::{HtmlMeta, HtmlMetaType};
 use super::output::HtmlOutput;
 use crate::render::Handle;
-use crate::{info, PageInfo};
+use crate::url::is_url;
+use crate::{info, Backlinks, Link, PageInfo};
+use std::borrow::Cow;
 use std::fmt::{self, Write};
 use std::num::NonZeroUsize;
 
@@ -32,6 +34,7 @@ pub struct HtmlContext<'i, 'h> {
     body: String,
     styles: Vec<String>,
     meta: Vec<HtmlMeta>,
+    backlinks: Backlinks<'static>,
     info: &'i PageInfo<'i>,
     handle: &'h Handle,
 
@@ -46,6 +49,7 @@ impl<'i, 'h> HtmlContext<'i, 'h> {
             body: String::new(),
             styles: Vec::new(),
             meta: Self::initial_metadata(info),
+            backlinks: Backlinks::new(),
             info,
             handle,
             code_snippet_index: NonZeroUsize::new(1).unwrap(),
@@ -104,6 +108,27 @@ impl<'i, 'h> HtmlContext<'i, 'h> {
         index
     }
 
+    // Backlinks
+    #[inline]
+    pub fn add_link(&mut self, link: &str) {
+        // TODO: set to internal link if domain matches site
+        // See https://scuttle.atlassian.net/browse/WJ-24
+
+        let link_owned = Cow::Owned(str!(link));
+
+        if is_url(link) {
+            self.backlinks.external_links.push(link_owned);
+        } else {
+            // TODO: determine if page exists
+            // this also involves stripping leading `/`s to get the slug,
+            // if relevant, e.g. `/scp-001`.
+            let exists = true;
+
+            let link = Link::new(link_owned, exists);
+            self.backlinks.internal_links.push(link);
+        }
+    }
+
     // Buffer management
     #[inline]
     pub fn buffer(&mut self) -> &mut String {
@@ -140,10 +165,19 @@ impl<'i, 'h> From<HtmlContext<'i, 'h>> for HtmlOutput {
     #[inline]
     fn from(ctx: HtmlContext<'i, 'h>) -> HtmlOutput {
         let HtmlContext {
-            body, styles, meta, ..
+            body,
+            styles,
+            meta,
+            backlinks,
+            ..
         } = ctx;
 
-        HtmlOutput { body, styles, meta }
+        HtmlOutput {
+            body,
+            styles,
+            meta,
+            backlinks,
+        }
     }
 }
 
